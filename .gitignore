@@ -17,3 +17,19 @@ data/
 # אופציונלי: אם אתה לא רוצה לשמור את קבצי ה-JSON הגולמיים בגיט
 # (תשאיר את השורה הזו בהערה אם אתה כן רוצה לשמור את התוצאות)
 # *.json
+
+# Model Files (TOO BIG FOR GITHUB)
+lora_model/
+LoRA_model_llama3.1/
+outputs/
+*.safetensors
+*.pth
+*.bin
+*.gguf
+*.zip
+
+# Colab specific
+sample_data/
+
+# IDE settings
+.idea/
