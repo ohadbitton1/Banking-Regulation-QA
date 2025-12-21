@@ -27,8 +27,8 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
 
 ## 📁 **Repository Structure**
 -  [Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
--  Code – Implementation of an LLM-based Regulatory Banking Q&A model
--  Data – Dataset containing questions, classifications, relevant document sections, and example answers
+-  [Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation of an LLM-based Regulatory Banking Q&A model
+-  [Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Dataset containing questions, classifications, relevant document sections, and example answers
 -  Results – Model evaluation metrics and outputs
 -  Visuals – Diagrams, visual abstracts, and illustrations
 
