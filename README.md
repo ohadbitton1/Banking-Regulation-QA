@@ -26,11 +26,11 @@ Our project addresses this by building a Regulatory Banking Q&A model that takes
 The model leverages RAG to retrieve relevant document chunks and is trained on a dataset containing questions, classifications, precise rules, and example answers.
 
 ## 📁 **Repository Structure**
-- [📁 Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
-- [📁 Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation
-- [📁 Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Datasets
-    - [📁 FT_datasets](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data/FT_datasets) – Train and Test data sets for Fine Tuning
-    - [📄 RegulAItion_dataset.json](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Data/RegulAItion_dataset.json) – Dataset containing questions, classifications, relevant document chunk & sections, and example answers
+- 📁[Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
+- 📁[Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation
+- 📁[Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Datasets
+    - 📁[FT_datasets](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data/FT_datasets) – Train and Test data sets for Fine Tuning
+    - 📄[RegulAItion_dataset.json](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Data/RegulAItion_dataset.json) – Dataset containing questions, classifications, relevant document chunk & sections, and example answers
 -  Results – Model evaluation metrics and outputs
 -  Visuals – Diagrams, visual abstracts, and illustrations
 
