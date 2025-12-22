@@ -1,22 +1,16 @@
-# התעלם מהסביבה הווירטואלית (זה הגורם העיקרי ל-10K קבצים)
+# Virtual environment
 venv/
 .venv/
 env/
 
-# התעלם מקבצי קומפילציה של פייתון (קבצים זמניים)
+# Python compilation files
 __pycache__/
 *.py[cod]
 
-# התעלם מהגדרות אישיות של VS Code
+# VScode preset
 .vscode/
 
-# התעלם מקבצי דאטה כבדים ו-PDFים
-
-# אופציונלי: אם אתה לא רוצה לשמור את קבצי ה-JSON הגולמיים בגיט
-# (תשאיר את השורה הזו בהערה אם אתה כן רוצה לשמור את התוצאות)
-# *.json
-
-# Model Files (TOO BIG FOR GITHUB)
+# Model files
 lora_model/
 LoRA_model_llama3.1/
 outputs/
