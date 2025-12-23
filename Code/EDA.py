@@ -12,7 +12,7 @@ import numpy as np
 # ==========================================
 JSON_PATH = "../DATA/RegulAItion_dataset.json"  # Clean JSON
 SCORES_CSV = "../DATA/verification_scores.csv"  # verify_ultimate scores
-EDA_DIR = "EDA"
+EDA_DIR = "../Visuals/EDA"
 os.makedirs(EDA_DIR, exist_ok=True)
 # ==========================================
 
