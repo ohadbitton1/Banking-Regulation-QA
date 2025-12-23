@@ -1,5 +1,5 @@
 # 🤖 Regul𝔸𝕀tions
-This repository contains our course project materials for "Large Language Model for Natural Language Processing"  
+This repository contains our course project materials for "Large Language Models for Natural Language Processing"  
 designed by Dr. Sasha Apartsin.  
 
 Here you will find our project presentations (proposal, interim, final), code, datasets, results, and visual abstract.  
@@ -28,14 +28,14 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
 ## 📁 **Repository Structure**
 - 📁[Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
 - 📁[Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation
-    - 📄[EDA.py](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Code/EDA.py)
+    - 📄[EDA.py](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Code/EDA.py) – Exploratory data analysis script
 - 📁[Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Datasets
     - 📁[FT_datasets](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data/FT_datasets) – Train and Test data sets for Fine Tuning
     - 📄[RegulAItion_dataset.json](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Data/RegulAItion_dataset.json) – Dataset containing questions, classifications, relevant document chunk & sections, and example answers
 -  Results – Model evaluation metrics and outputs
 - 📁[Visuals](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Visuals) – Diagrams, visual abstracts, and illustrations
-    - 📁[EDA](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Visuals/EDA) - EDA visualizations
-- 📁[Resources](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Resources) - Supplementary materials and external references
+    - 📁[EDA](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Visuals/EDA) – Exploratory data analysis visualizations
+- 📁[Resources](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Resources) – Supplementary materials and external references
 
 ## 🎓 **Team Members**
 - Yossef Okropiridze
