@@ -75,13 +75,12 @@ def instances_per_file_and_section():
     sources = [item["source"] for item in data if item.get("source")]
     counts = Counter(sources)
 
-    # פונקציה בטוחה לסידור לפי המספר הראשי במחרוזת
     def get_sort_key(source):
         match = re.search(r"\d+", source)
         if match:
             return int(match.group(0))
         else:
-            return float('inf')  # סוגר את הערכים שלא ניתן לפענח בסוף
+            return float('inf')
 
     sorted_sources = sorted(counts.keys(), key=get_sort_key)
     sorted_counts = [counts[s] for s in sorted_sources]
