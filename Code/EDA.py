@@ -28,7 +28,6 @@ def scatter_scores():
 
     plt.figure(figsize=(8, 6))
     plt.scatter(x[passed], y[passed], alpha=0.6, label="Passed", color="green")
-    plt.scatter(x[~passed], y[~passed], alpha=0.6, label="Discarded", color="red")
     plt.plot(x, trend(x), linewidth=2, color="blue", label="Trend Line")
 
     plt.xlabel("Question ↔ Citation Similarity")
