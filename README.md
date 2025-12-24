@@ -44,5 +44,6 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
 
 ## 🎓 **Team Members**
 - Yossef Okropiridze
-- Ohad Biton
+- Ohad Bitton
 - Michael Naftalishen
+
