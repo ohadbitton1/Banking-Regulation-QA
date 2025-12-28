@@ -28,23 +28,24 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
 ## 📁 **Repository Structure**
 - 📁[Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
 
-- 📁Requirements_files - Environment dependencies
+- 📁[Requirements_files](https://github.com/ohadbitton1/RegulAItion/tree/main/Requierments_files) - Environment dependencies
 
 - 📁[Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation
-    - 📁Baseline_notebooks – Notebooks for initial model experiments
-    - 📁data_generation_&_validation - Scripts for generating and validating datasets
+    - 📁[Baseline_notebooks](https://github.com/ohadbitton1/RegulAItion/tree/main/Code/Baseline_notebooks) – Notebooks for initial model experiments
+    - 📁[data_generation_&_validation](https://github.com/ohadbitton1/RegulAItion/tree/main/Code/data_generation_%26_validation) - Scripts for generating and validating datasets
     - 📄[EDA.py](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Code/EDA.py) – Exploratory data analysis script
     - 📄[prepare_for_colab.py](https://github.com/ohadbitton1/RegulAItion/blob/main/Code/prepare_for_colab.py) – Converts the raw dataset into Train/Test JSON files for LLM fine-tuning.
-    - 📄create_inference_report.py – Generates a CSV report comparing model predictions with ground-truth answers.
+    - 📄[create_inference_report.py](https://github.com/ohadbitton1/RegulAItion/blob/main/Code/create_inference_report.py) – Generates a CSV report comparing model predictions with ground-truth answers.
 
 - 📁[Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Datasets
     - 📁[FT_datasets](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data/FT_datasets) – Train and Test data sets for Fine Tuning
     - 📄[RegulAItion_dataset.json](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Data/RegulAItion_dataset.json) – Dataset containing questions, classifications, relevant document chunk & sections, and example answers
 
-- 📁Models - Saved model weights and configurations
-    - 📁baseline_LoRA - Pretrained LoRA model checkpoints
+- 📁[Models](https://github.com/ohadbitton1/RegulAItion/tree/main/Models) - Saved model weights and configurations
+    - 📁[Baseline_LoRA](https://github.com/ohadbitton1/RegulAItion/tree/main/Models/baseline_LoRA) - Pretrained LoRA model checkpoints
 
--  📁Results – Model evaluation metrics and outputs
+-  📁[Results](https://github.com/ohadbitton1/RegulAItion/tree/main/Results) – Model evaluation metrics and outputs
+    - 📁[Inference_report](https://github.com/ohadbitton1/RegulAItion/tree/main/Results/Inference_report) - baseline model predictions compared to ground-truth answers
 
 - 📁[Visuals](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Visuals) – Diagrams, visual abstracts, and illustrations
     - 📁[EDA](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Visuals/EDA) – Exploratory data analysis visualizations
