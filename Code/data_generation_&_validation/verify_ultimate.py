@@ -167,7 +167,7 @@ def filter_and_overwrite():
     print("Loading AI model...")
     model = SentenceTransformer('all-MiniLM-L6-v2')
     
-    # 1. טעינת המידע לזיכרון
+    # 1. Load data to memory
     with open(TARGET_FILE, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
@@ -180,13 +180,13 @@ def filter_and_overwrite():
         if (i+1) % 10 == 0:
             print(f"Checking item {i+1}/{len(data)}...", end="\r")
 
-        # הכנת נתונים
+        # Data preparations
         context = item.get('context', '')
         citation = item.get('citation', '')
         question = item.get('question', '')
         explanation = item.get('explanation', '')
 
-        # בדיקות
+        # Validation
         is_citation_valid = is_subsequence(citation, context)
         
         embeddings = model.encode([question, citation, explanation])
@@ -196,7 +196,7 @@ def filter_and_overwrite():
         pass_q_cit = score_q_cit > THRESH_Q_VS_CIT
         pass_exp_cit = score_exp_cit > THRESH_EXP_VS_CIT
 
-        # סינון
+        # Filtering
         if is_citation_valid and pass_q_cit and pass_exp_cit:
             approved_data.append(item)
         else:
@@ -207,7 +207,7 @@ def filter_and_overwrite():
             if not pass_exp_cit: print(f"   - Bad Explanation")
             print("-" * 30)
 
-    # 2. דריסת הקובץ המקורי עם המידע הנקי בלבד
+    # 2. Overwrite the original file with clean data only
     if len(approved_data) > 0:
         print(f"\n\n--- Overwriting File ---")
         with open(TARGET_FILE, 'w', encoding='utf-8') as f:
