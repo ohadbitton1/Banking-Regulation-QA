@@ -28,7 +28,7 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
 ## 📁 **Repository Structure**
 - 📁[Presentations](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Presentations) – Proposal, interim, and final presentations
 
-- 📁[Requirements_files](https://github.com/ohadbitton1/RegulAItion/tree/main/Requierments_files) - Environment dependencies
+- 📁[Environment_dependencies](https://github.com/ohadbitton1/RegulAItion/tree/main/Requierments_files) - Environment dependencies
 
 - 📁[Code](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Code) – Implementation
     - 📁[Baseline_notebooks](https://github.com/ohadbitton1/RegulAItion/tree/main/Code/Baseline_notebooks) – Notebooks for initial model experiments
