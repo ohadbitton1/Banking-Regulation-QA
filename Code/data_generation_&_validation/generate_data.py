@@ -7,18 +7,16 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from prepare_data import load_and_split_pdfs
 
-
-# 1. הדבק את המפתח שלך כאן (הסתרתי אותו מטעמי אבטחה)
+# 1. Paste your API key here (hidden for security)
 os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY_HERE"
-# 2. הגדרת כמות הצ'אנקים לדגימה (רנדומלי)
+# 2. Set the number of chunks to sample (randomly)
 SAMPLE_SIZE = 150
-
 
 # ==========================================
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
 
-# הפרומפט המעודכן: מבקש שדה מקור אחד מאוחד מהמודל
+# Updated prompt: request a single unified "source" field from the model
 prompt_template = """
 You are a strict data generator for banking regulation compliance.
 Based **STRICTLY** on the provided context, generate **3 distinct** training examples.
@@ -68,14 +66,15 @@ def generate_synthetic_data_banker():
         print("Error: No chunks found.")
         return
 
-    # === השינוי: בחירה רנדומלית של 100 צ'אנקים מתוך כל הקיימים ===
-    # שימוש ב-min מבטיח שלא נקרוס אם יש פחות מ-100 צ'אנקים סה"כ
+    # === Change: randomly select 100 chunks from all available ===
+    # Using min ensures it won't crash if there are fewer than 100 chunks total
     print(f"Selecting {SAMPLE_SIZE} random chunks from {len(chunks)} available...")
     selected_chunks = random.sample(chunks, min(len(chunks), SAMPLE_SIZE))
+
     # ============================================================
     
     results = []
-    output_file = "RegulAItion_dataset.json" 
+    output_file = "../Data/RegulAItion_dataset.json" # Output File
     
     print(f"\n--- Starting Run (Unified Source Field) ---")
     
@@ -83,7 +82,7 @@ def generate_synthetic_data_banker():
         print(f"Processing chunk {i+1}/{len(selected_chunks)}...")
         
         try:
-            # שליחה ל-GPT
+            # Sending to GPT
             response_text = chain.invoke({"context": chunk.page_content})
             
             cleaned_response = clean_json_string(response_text)
@@ -91,17 +90,17 @@ def generate_synthetic_data_banker():
             
             if isinstance(data_list, dict): data_list = [data_list]
             
-            # נתונים מהפייתון (שם קובץ ועמוד)
+            # Data from Python (file name and page)
             filename = os.path.basename(chunk.metadata.get('source', 'Unknown'))
             doc_num = get_doc_number(filename)
-            page_num = chunk.metadata.get('page', 0) + 1 # עמוד 1-based
+            page_num = chunk.metadata.get('page', 0) + 1 # 1 page based
 
             for item in data_list:
-                # המודל מחזיר את הטקסט (כותרת וסעיף)
+                # The model returns the text (title and section)
                 text_location = item.get("source_details", "General")
                 
-                # אנחנו מוסיפים את המסמך והעמוד בהתחלה
-                # תוצאה סופית: 411-10, AML Officer, Section 14(b)
+                # We prepend the document and page at the beginning
+                # Final result: 411-10, AML Officer, Section 14(b)
                 final_source = f"{doc_num}-{page_num}, {text_location}"
 
                 entry = {
@@ -116,7 +115,7 @@ def generate_synthetic_data_banker():
             
             print(f" -> [V] Success! Added {len(data_list)} pairs.")
             
-            # שמירה רציפה
+            # Continuous saving
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(results, f, indent=4, ensure_ascii=False)
             

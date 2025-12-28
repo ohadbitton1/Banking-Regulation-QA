@@ -5,12 +5,12 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================
-#        הגדרות (קובץ אחד בלבד)
-# ==========================================
-TARGET_FILE = "RegulAItion_dataset.json"  # גם הקלט וגם הפלט
+#       Settings (single file only)
+#  ==========================================
+TARGET_FILE = "RegulAItion_dataset.json"  # Both input and output
 # ==========================================
 
-# ספי דיוק
+# Accuracy thresholds
 THRESH_Q_VS_CIT = 0.35
 THRESH_EXP_VS_CIT = 0.45
 import json
@@ -21,10 +21,10 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================
-#        הגדרות
+#        Settings
 # ==========================================
-TARGET_FILE = "../DATA/RegulAItion_dataset.json"   # קלט + פלט (אם רוצים לעבוד על DATA)
-SCORES_FILE = os.path.join("..", "DATA", "verification_scores.csv")  # פלט ל-EDA
+TARGET_FILE = "../DATA/RegulAItion_dataset.json"   # Input + output (if working on the DATA)
+SCORES_FILE = os.path.join("..", "DATA", "verification_scores.csv")  # Output for EDA
 # ==========================================
 
 THRESH_Q_VS_CIT = 0.35
@@ -110,7 +110,7 @@ def filter_and_overwrite():
                 print("   - Bad Explanation")
             print("-" * 30)
 
-    # דריסת JSON נקי
+    # Overwrite with clean JSON
     if approved_data:
         with open(TARGET_FILE, 'w', encoding='utf-8') as f:
             json.dump(approved_data, f, indent=4, ensure_ascii=False)
@@ -123,10 +123,10 @@ def filter_and_overwrite():
         print("\n⚠️ Safety Stop: No data survived. File NOT overwritten.")
         return
 
-    # ודא שהתיקייה קיימת לפני כתיבת CSV
+    # Ensure the folder exists before writing the CSV
     os.makedirs(os.path.dirname(SCORES_FILE), exist_ok=True)
 
-    # כתיבת CSV של scores ל-EDA
+    # Write CSV of scores for EDA
     with open(SCORES_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
