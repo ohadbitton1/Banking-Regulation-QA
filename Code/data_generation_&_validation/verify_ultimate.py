@@ -23,8 +23,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 # ==========================================
 #        Settings
 # ==========================================
-TARGET_FILE = "../DATA/RegulAItion_dataset.json"   # Input + output (if working on the DATA)
-SCORES_FILE = os.path.join("..", "DATA", "verification_scores.csv")  # Output for EDA
+TARGET_FILE = "../../DATA/RegulAItion_dataset.json"   # Input + output (if working on the DATA)
+SCORES_FILE = os.path.join("..", "..", "DATA", "verification_scores.csv")  # Output for EDA
 # ==========================================
 
 THRESH_Q_VS_CIT = 0.35

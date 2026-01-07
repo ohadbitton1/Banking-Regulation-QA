@@ -38,6 +38,7 @@ The model leverages RAG to retrieve relevant document chunks and is trained on a
     - 📄[create_inference_report.py](https://github.com/ohadbitton1/RegulAItion/blob/main/Code/create_inference_report.py) – Generates a CSV report comparing model predictions with ground-truth answers.
 
 - 📁[Data](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data) – Datasets
+    - 📁[Regulatory_Rules]() – Official regulatory documents
     - 📁[FT_datasets](https://github.com/ohadbitton1/Banking-Regulation-QA/tree/main/Data/FT_datasets) – Train and Test data sets for Fine Tuning
     - 📄[RegulAItion_dataset.json](https://github.com/ohadbitton1/Banking-Regulation-QA/blob/main/Data/RegulAItion_dataset.json) – Dataset containing questions, classifications, relevant document chunk & sections, and example answers
 

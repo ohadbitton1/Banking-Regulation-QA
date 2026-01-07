@@ -8,9 +8,9 @@ from langchain_core.output_parsers import StrOutputParser
 from prepare_data import load_and_split_pdfs
 
 # 1. Paste your API key here (hidden for security)
-os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY_HERE"
+os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
 # 2. Set the number of chunks to sample (randomly)
-SAMPLE_SIZE = 150
+SAMPLE_SIZE = 518
 
 # ==========================================
 
@@ -19,13 +19,13 @@ llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
 # Updated prompt: request a single unified "source" field from the model
 prompt_template = """
 You are a strict data generator for banking regulation compliance.
-Based **STRICTLY** on the provided context, generate **3 distinct** training examples.
+Based **STRICTLY** on the provided context, generate **4 distinct** training examples.
 
 Context:
 "{context}"
 
 Task:
-Generate a JSON LIST containing 3 different "Yes/No" Question-Answer pairs.
+Generate a JSON LIST containing 2 'Yes' and 2 'No' Question-Answer pairs.
 
 Requirements:
 1. **question**: Practical question by a bank employee (e.g., "Am I allowed to...", "Must we report...").
@@ -61,7 +61,9 @@ def get_doc_number(filename):
 def generate_synthetic_data_banker():
     print("--- Loading Chunks ---")
     chunks = load_and_split_pdfs()
-    
+
+    # Save Chunks
+
     if not chunks: 
         print("Error: No chunks found.")
         return
@@ -74,7 +76,7 @@ def generate_synthetic_data_banker():
     # ============================================================
     
     results = []
-    output_file = "../Data/RegulAItion_dataset.json" # Output File
+    output_file = "../../Data/RegulAItion_dataset.json" # Output File
     
     print(f"\n--- Starting Run (Unified Source Field) ---")
     

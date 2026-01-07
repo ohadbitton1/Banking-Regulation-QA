@@ -6,7 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 def load_and_split_pdfs():
 
     # Path to the data folder
-    directory_path = "../documents" # Regulation Documents pdf files path
+    directory_path = "../../Data/Regulatory_Rules" # Regulation Documents pdf files path
     
     print(f"--- Starting Process ---")
     print(f"Looking for PDFs in: {os.path.abspath(directory_path)}")
