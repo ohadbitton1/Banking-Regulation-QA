@@ -4,13 +4,14 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def load_and_split_pdfs():
-    # הנתיב לתיקיית ה-data
-    directory_path = "./data"
+
+    # Path to the data folder
+    directory_path = "../../Data/Regulatory_Rules" # Regulation Documents pdf files path
     
     print(f"--- Starting Process ---")
     print(f"Looking for PDFs in: {os.path.abspath(directory_path)}")
     
-    # 1. טעינת כל הקבצים מהתיקייה
+    # 1. Load all files from the folder
     loader = PyPDFDirectoryLoader(directory_path)
     documents = loader.load()
     
@@ -20,34 +21,34 @@ def load_and_split_pdfs():
 
     print(f"\nSuccessfully loaded {len(documents)} pages from the PDFs.")
 
-    # 2. הגדרת ה-Splitter (חלוקה למקטעים)
-    # chunk_size=1500: גודל המאפשר הכנסת סעיף רגולטורי מלא והקשר
-    # chunk_overlap=200: חפיפה למניעת איבוד מידע במעבר בין פסקאות
+    # 2. Set up the Splitter (divide into segments)
+    # chunk_size=1500: size that allows including a full regulatory section and context
+    # chunk_overlap=200: overlap to prevent losing information between paragraphs
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=900,
         chunk_overlap=130,
         separators=["\n\n", "\n", ".", " ", ""]
     )
 
-    # 3. ביצוע החלוקה בפועל
+    # 3. Perform the actual splitting
     chunks = text_splitter.split_documents(documents)
     
     print(f"\n------------------------------------------------")
     print(f"Total chunks created: {len(chunks)}")
     print(f"------------------------------------------------")
     
-    # 4. בדיקה סטטיסטית - כמה צ'אנקים הגיעו מכל קובץ?
-    # זה מוודא שכל המסמכים (310, 311 וכו') נכללו
+    # 4. Statistical check – how many chunks were generated from each file?
+    # This ensures all documents (310, 311, etc.) are included
     print("\n--- Sources Statistics (Chunks per File) ---")
     if chunks:
-        # שליפת שם הקובץ מכל מקטע
+        # Extract the file name from each chunk
         sources = [os.path.basename(chunk.metadata.get('source', 'Unknown')) for chunk in chunks]
         stats = Counter(sources)
         
         for filename, count in stats.items():
             print(f" [V] {filename}: {count} chunks")
     
-    # 5. הצצה למקטע הראשון לבדיקת תקינות
+    # 5. Preview the first chunk to check correctness
     if chunks:
         print("\n--- Preview of the first chunk ---")
         first_chunk = chunks[0]

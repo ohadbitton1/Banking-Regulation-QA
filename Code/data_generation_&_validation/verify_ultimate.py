@@ -5,12 +5,12 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================
-#        הגדרות (קובץ אחד בלבד)
-# ==========================================
-TARGET_FILE = "RegulAItion_dataset.json"  # גם הקלט וגם הפלט
+#       Settings (single file only)
+#  ==========================================
+TARGET_FILE = "RegulAItion_dataset.json"  # Both input and output
 # ==========================================
 
-# ספי דיוק
+# Accuracy thresholds
 THRESH_Q_VS_CIT = 0.35
 THRESH_EXP_VS_CIT = 0.45
 import json
@@ -21,10 +21,10 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================
-#        הגדרות
+#        Settings
 # ==========================================
-TARGET_FILE = "../DATA/RegulAItion_dataset.json"   # קלט + פלט (אם רוצים לעבוד על DATA)
-SCORES_FILE = os.path.join("..", "DATA", "verification_scores.csv")  # פלט ל-EDA
+TARGET_FILE = "../../DATA/RegulAItion_dataset.json"   # Input + output (if working on the DATA)
+SCORES_FILE = os.path.join("..", "..", "DATA", "verification_scores.csv")  # Output for EDA
 # ==========================================
 
 THRESH_Q_VS_CIT = 0.35
@@ -110,7 +110,7 @@ def filter_and_overwrite():
                 print("   - Bad Explanation")
             print("-" * 30)
 
-    # דריסת JSON נקי
+    # Overwrite with clean JSON
     if approved_data:
         with open(TARGET_FILE, 'w', encoding='utf-8') as f:
             json.dump(approved_data, f, indent=4, ensure_ascii=False)
@@ -123,10 +123,10 @@ def filter_and_overwrite():
         print("\n⚠️ Safety Stop: No data survived. File NOT overwritten.")
         return
 
-    # ודא שהתיקייה קיימת לפני כתיבת CSV
+    # Ensure the folder exists before writing the CSV
     os.makedirs(os.path.dirname(SCORES_FILE), exist_ok=True)
 
-    # כתיבת CSV של scores ל-EDA
+    # Write CSV of scores for EDA
     with open(SCORES_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
@@ -167,7 +167,7 @@ def filter_and_overwrite():
     print("Loading AI model...")
     model = SentenceTransformer('all-MiniLM-L6-v2')
     
-    # 1. טעינת המידע לזיכרון
+    # 1. Load data to memory
     with open(TARGET_FILE, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
@@ -180,13 +180,13 @@ def filter_and_overwrite():
         if (i+1) % 10 == 0:
             print(f"Checking item {i+1}/{len(data)}...", end="\r")
 
-        # הכנת נתונים
+        # Data preparations
         context = item.get('context', '')
         citation = item.get('citation', '')
         question = item.get('question', '')
         explanation = item.get('explanation', '')
 
-        # בדיקות
+        # Validation
         is_citation_valid = is_subsequence(citation, context)
         
         embeddings = model.encode([question, citation, explanation])
@@ -196,7 +196,7 @@ def filter_and_overwrite():
         pass_q_cit = score_q_cit > THRESH_Q_VS_CIT
         pass_exp_cit = score_exp_cit > THRESH_EXP_VS_CIT
 
-        # סינון
+        # Filtering
         if is_citation_valid and pass_q_cit and pass_exp_cit:
             approved_data.append(item)
         else:
@@ -207,7 +207,7 @@ def filter_and_overwrite():
             if not pass_exp_cit: print(f"   - Bad Explanation")
             print("-" * 30)
 
-    # 2. דריסת הקובץ המקורי עם המידע הנקי בלבד
+    # 2. Overwrite the original file with clean data only
     if len(approved_data) > 0:
         print(f"\n\n--- Overwriting File ---")
         with open(TARGET_FILE, 'w', encoding='utf-8') as f:

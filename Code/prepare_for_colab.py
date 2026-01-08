@@ -2,13 +2,13 @@ import json
 import os
 from sklearn.model_selection import train_test_split
 
-# --- הגדרות ---
+# --- Settings ---
 INPUT_FILE = "RegulAItion_dataset.json"
-OUTPUT_DIR = "FT_datasets"  # שם התיקייה החדשה
+OUTPUT_DIR = "../Data/DT_datasets/FT_datasets" # Output Directory
 TRAIN_FILE = os.path.join(OUTPUT_DIR, "train_dataset.json")
 TEST_FILE = os.path.join(OUTPUT_DIR, "test_dataset.json")
 
-# פרומפט בפורמט Alpaca (סטנדרט למודלים מסוג Llama)
+# Alpaca prompt
 PROMPT_TEMPLATE = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
 
 ### Instruction:
@@ -26,26 +26,26 @@ Question: {question}
 def prepare_data():
     print(f"--- Preparing Data for Llama-3 Training ---")
     
-    # 1. בדיקת קיום קובץ הקלט
+    # 1. Check input file existence
     if not os.path.exists(INPUT_FILE):
         print(f"Error: Could not find {INPUT_FILE}")
         return
 
-    # 2. טעינת הנתונים
+    # 2. Load data
     with open(INPUT_FILE, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
     formatted_data = []
     
-    # 3. המרת הנתונים לפורמט אימון (Prompt + Completion)
+    # 3. Data conversion to a training format (Prompt + Completion)
     for item in data:
-        # יצירת הקלט (השאלה והקונטקסט)
+        # Creating the input (the question and the context)
         input_text = PROMPT_TEMPLATE.format(
             context=item['context'],
             question=item['question']
         )
         
-        # יצירת הפלט (ה-JSON שהמודל צריך ללמוד להחזיר)
+        # Creating the output (the JSON that the model should learn to return)
         output_json = {
             "answer": item['answer'],
             "citation": item['citation'],
@@ -58,7 +58,7 @@ def prepare_data():
             "output": output_text
         })
 
-    # 4. חלוקה ל-Train ו-Test (מספר קבוע של 50 לטסט)
+    # 4. Splitting into Train and Test sets (fixed test size of 50)
     train_data, test_data = train_test_split(formatted_data, test_size=50, random_state=42)
     
     print(f"\nStats:")
@@ -66,8 +66,8 @@ def prepare_data():
     print(f"Training set:   {len(train_data)}")
     print(f"Testing set:    {len(test_data)}")
 
-    # 5. יצירת התיקייה ושמירת הקבצים
-    os.makedirs(OUTPUT_DIR, exist_ok=True) # יוצר את התיקייה אם היא איננה
+    # 5. Creating the directory and saving the files
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     
     with open(TRAIN_FILE, 'w', encoding='utf-8') as f:
         json.dump(train_data, f, indent=4)
