@@ -1,7 +1,18 @@
 import os
+import json
 from collections import Counter
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+def serialize_chunks(chunks):
+    return [
+        {
+            "text": chunk.page_content,
+            "metadata": chunk.metadata
+        }
+        for chunk in chunks
+    ]
+
 
 def load_and_split_pdfs():
 
@@ -58,7 +69,48 @@ def load_and_split_pdfs():
         print(first_chunk.page_content[:500])
         print("...")
         
+    # 6. Serialize chunks for JSON
+    serialized_chunks = serialize_chunks(chunks)
+
+    data = {
+        "meta": {
+            "total_chunks": len(serialized_chunks),
+            "chunk_size": 900,
+            "chunk_overlap": 130,
+            "source_dir": os.path.abspath(directory_path)
+        },
+        "chunks": serialized_chunks
+    }
+
+    # 7. Save to JSON
+    output_path = "../../Data/Chunks/Regulatory_Rules_Chunks.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"\n[V] Chunks saved successfully to: {output_path}\n")
+
     return chunks
+
+    '''
+    # Load it later
+    with open("documents_chunks.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    chunks = data["chunks"]
+
+
+    # LangChain Documents
+    from langchain.schema import Document
+
+        documents = [
+            Document(
+                page_content=chunk["text"],
+                metadata=chunk["metadata"]
+            )
+            for chunk in chunks
+        ]
+
+    '''
 
 if __name__ == "__main__":
     final_chunks = load_and_split_pdfs()
