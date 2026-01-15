@@ -1,4 +1,4 @@
-// Requirments for training the model in a colab notebook
+# Requirments for training the model in a colab notebook
 
 unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
 xformers
