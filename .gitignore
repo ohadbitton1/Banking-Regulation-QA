@@ -27,3 +27,5 @@ sample_data/
 .idea/
 
 !Models/baseline_LoRA/adapter_model.safetensors
+
+
