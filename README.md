@@ -1,8 +1,4 @@
 # 🤖 Regul𝔸𝕀tions
-This repository contains our course project materials for "Large Language Models for Natural Language Processing"  
-designed by Dr. Sasha Apartsin.  
-
-Here you will find our project presentations (proposal, interim, final), code, datasets, results, and visual abstract.  
 
 ## 🎯 **Project Motivation**
 The banking industry is heavily regulated, and professionals often need to consult multiple complex documents to determine the legality of specific actions.  
