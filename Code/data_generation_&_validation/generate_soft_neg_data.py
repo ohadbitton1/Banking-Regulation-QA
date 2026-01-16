@@ -16,6 +16,9 @@ SAMPLE_SIZE = 100
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
 
+# Opening variations for the question that will be generated.
+openings = ["What", "How", "When", "Is", "Can", "Are", "Does", "Should", "Under", "To", "In", "Who", "Which", "Whose", "For", "Within", "May"]
+
 # Updated prompt: request a single unified "source" field from the model
 prompt_template = """
 You are a strict data generator for banking regulation compliance.
@@ -29,6 +32,8 @@ Generate a JSON LIST of 1 objects.
 
 Requirements:
 1. question: A professional banking question that is TOPICALLY DIFFERENT from the provided context.
+    - Use DIVERSE openings for the questions.
+    - The question MUST start with the following opening word: "{opening}"
 2. answer: MUST always be "N.A".
 3. citation: Pick a RANDOM sentence from the context (verbatim) to serve as noise.
 4. explanation: A professional statement stating that the regulation regarding the CURRENT TOPIC does not address the QUESTION TOPIC.
@@ -47,7 +52,7 @@ Requirements:
 Output format: Return ONLY a valid JSON LIST of objects.
 """
 
-prompt = PromptTemplate(template=prompt_template, input_variables=["context"])
+prompt = PromptTemplate(template=prompt_template, input_variables=["context","opening"])
 chain = prompt | llm | StrOutputParser()
 
 def clean_json_string(s):
@@ -85,9 +90,10 @@ def generate_synthetic_data_banker():
     for i, chunk in enumerate(selected_chunks):
         print(f"Processing chunk {i+1}/{len(selected_chunks)}...")
         
+        opening = random.choice(openings)
         try:
             # Sending to GPT
-            response_text = chain.invoke({"context": chunk.page_content})
+            response_text = chain.invoke({"context": chunk.page_content, "opening": opening})
             
             cleaned_response = clean_json_string(response_text)
             data_list = json.loads(cleaned_response)
