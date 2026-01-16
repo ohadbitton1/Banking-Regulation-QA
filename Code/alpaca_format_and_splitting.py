@@ -27,7 +27,7 @@ def create_alpaca_entry(item):
         "answer": item['answer'],
         "citation": item['citation'],
         "explanation": item['explanation'],
-        "source_details": item['source_details']
+        "source_details": item['source']
     }
     output_str = json.dumps(output_json, indent=4, ensure_ascii=False)
 
