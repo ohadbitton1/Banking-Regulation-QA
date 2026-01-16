@@ -92,6 +92,7 @@ def load_and_split_pdfs():
     return chunks
 
     '''
+    
     # Load it later
     with open("documents_chunks.json", "r", encoding="utf-8") as f:
         data = json.load(f)

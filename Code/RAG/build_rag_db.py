@@ -12,17 +12,17 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 2. Define absolute paths relative to this script
 # Save DB in the same folder as this script
-DB_PATH = os.path.join(BASE_DIR, "banking_rag_db")
+DB_PATH = "../../Data/RAG_db"
 
 COLLECTION_NAME = "regulations"
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+EMBEDDING_MODEL = "all-MiniLM-L6-v2" 
 
 def load_data_from_json():
     """
     Attempts to locate the JSON file based on folder structure.
     """
     # Strategy: Script is in RAG -> Go up to RegulAItion -> Data -> Chunks
-    expected_path = os.path.join(BASE_DIR, "..", "Data", "Chunks", "Regulatory_Rules_Chunks.json")
+    expected_path = os.path.join(BASE_DIR, "../..", "Data", "Chunks", "Regulatory_Rules_Chunks.json")
     # Normalize path for OS
     expected_path = os.path.normpath(expected_path)
 
@@ -84,7 +84,7 @@ def build_vector_database():
     model = SentenceTransformer(EMBEDDING_MODEL)
 
     print(f"Connecting to DB at: {DB_PATH}...")
-    client = chromadb.PersistentClient(path=DB_PATH)
+    client = chromadb.PersistentClient(path=DB_PATH, )
     
     # Reset collection
     try:

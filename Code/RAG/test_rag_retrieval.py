@@ -5,7 +5,7 @@ import os
 # ==========================================
 #              CONFIGURATIONS
 # ==========================================
-DB_PATH = os.path.join(os.path.dirname(__file__), "banking_rag_db")
+DB_PATH = "../../Data/RAG_db"
 COLLECTION_NAME = "regulations"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
