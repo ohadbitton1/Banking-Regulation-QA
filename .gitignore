@@ -14,7 +14,6 @@ __pycache__/
 lora_model/
 LoRA_model_llama3.1/
 outputs/
-*.safetensors
 *.pth
 *.bin
 *.gguf
@@ -26,6 +25,5 @@ sample_data/
 # IDE settings
 .idea/
 
-!Models/baseline_LoRA/adapter_model.safetensors
 
 
