@@ -14,7 +14,7 @@ except ImportError:
 # ================= CONFIGURATION =================
 
 PROJECT_ROOT = "/content/drive/MyDrive/RegulAItion"
-DB_PATH = os.path.join(PROJECT_ROOT, "Data", "RAG_db")
+DB_PATH = os.path.join(PROJECT_ROOT, "Data", "RAG_db_all")
 ADAPTER_PATH = os.path.join(PROJECT_ROOT, "Models", "llama3.1_adapter")
 
 NA_MESSAGE = "I am unable to answer this question based on the provided context. Please try to rephrase or ask something else."
