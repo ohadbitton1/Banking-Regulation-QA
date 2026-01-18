@@ -8,9 +8,9 @@ from peft import PeftModel
 from google.colab import drive
 
 # ================= CONFIGURATION =================
-PROJECT_ROOT = "/content/drive/MyDrive/RegulAItion"
+PROJECT_ROOT = "/content/drive/MyDrive/Colab_Work/Regulation"
 DB_PATH = os.path.join(PROJECT_ROOT, "Data", "RAG_db_all")
-ADAPTER_PATH = os.path.join(PROJECT_ROOT, "Models", "Llama3.1_adapter") 
+ADAPTER_PATH = os.path.join(PROJECT_ROOT, "Models", "saul_adapter") 
 
 # ================= SETUP =================
 def setup_environment():
@@ -19,7 +19,7 @@ def setup_environment():
         drive.mount('/content/drive')
 
     if not os.path.exists(ADAPTER_PATH):
-        alt = ADAPTER_PATH.replace("Llama", "llama")
+        alt = ADAPTER_PATH.replace("Saul", "saul")
         if os.path.exists(alt): return DB_PATH, alt
         raise FileNotFoundError(f"❌ Adapter not found at {ADAPTER_PATH}")
     
@@ -29,7 +29,7 @@ def setup_environment():
 def load_system(db_path, adapter_path):
     print(f"⏳ Loading Model...")
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
+        model_name = "Equall/Saul-7B-Instruct-v1",
         max_seq_length=2048,
         load_in_4bit=True,
     )
