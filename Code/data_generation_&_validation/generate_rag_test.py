@@ -130,7 +130,7 @@ def generate_clean():
             # Data from Python (file name and page)
             filename = os.path.basename(chunk.metadata.get('source', 'Unknown'))
             doc_num = get_doc_number(filename)
-            page_num = chunk.metadata.get('page', 0) + 1 # 1 page based
+            page_num = chunk.metadata.get('page_label', 0) 
 
             for item in data_list:
                 
