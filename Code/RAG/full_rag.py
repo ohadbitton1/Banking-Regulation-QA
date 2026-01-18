@@ -1,191 +1,128 @@
+
 import os
 import sys
 import json
-import torch
 import chromadb
-
-# Imports for Colab environment
-try:
-    from unsloth import FastLanguageModel
-    from google.colab import drive
-except ImportError:
-    pass 
+from unsloth import FastLanguageModel
+from peft import PeftModel
+from google.colab import drive
 
 # ================= CONFIGURATION =================
-
 PROJECT_ROOT = "/content/drive/MyDrive/RegulAItion"
 DB_PATH = os.path.join(PROJECT_ROOT, "Data", "RAG_db_all")
-ADAPTER_PATH = os.path.join(PROJECT_ROOT, "Models", "Llama3.1_adapter")
+ADAPTER_PATH = os.path.join(PROJECT_ROOT, "Models", "Llama3.1_adapter") 
 
-NA_MESSAGE = "I am unable to answer this question based on the provided context. Please try to rephrase or ask something else."
-
-# ================= 1. SETUP & MOUNT =================
-
+# ================= SETUP =================
 def setup_environment():
-    """Mounts Drive and validates project paths."""
     print("🚀 Initializing Environment...")
-    if os.path.exists('/content') and not os.path.exists('/content/drive'):
-        print("📂 Mounting Google Drive...")
+    if not os.path.exists('/content/drive'):
         drive.mount('/content/drive')
 
-    if not os.path.exists(DB_PATH):
-        raise FileNotFoundError(f"❌ DB not found at {DB_PATH}")
     if not os.path.exists(ADAPTER_PATH):
+        alt = ADAPTER_PATH.replace("Llama", "llama")
+        if os.path.exists(alt): return DB_PATH, alt
         raise FileNotFoundError(f"❌ Adapter not found at {ADAPTER_PATH}")
-    print(f"✅ Environment Ready.")
-
-def load_rag_system():
-    """Loads ChromaDB and the Fine-Tuned Model via Unsloth."""
-    print("⏳ Loading Vector Database...")
-    client = chromadb.PersistentClient(path=DB_PATH)
-    collection = client.get_collection(name="regulations")
     
-    print(f"⏳ Loading Model (Unsloth optimized)...")
+    return DB_PATH, ADAPTER_PATH
+
+# ================= LOAD SYSTEM =================
+def load_system(db_path, adapter_path):
+    print(f"⏳ Loading Model...")
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name = ADAPTER_PATH, 
-        max_seq_length = 2048,
-        dtype = None,
-        load_in_4bit = True,
+        model_name="unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
+        max_seq_length=2048,
+        load_in_4bit=True,
     )
-    FastLanguageModel.for_inference(model) 
-    print("✅ System Loaded Successfully!")
-    return collection, model, tokenizer
+    model = PeftModel.from_pretrained(model, adapter_path)
+    FastLanguageModel.for_inference(model)
 
-# ================= 2. RETRIEVAL (BLOCK FORMATTING) =================
-
-def retrieve_context_with_sources(collection, query, n_results=5):
-    """
-    Fetches chunks and formats them into numbered blocks with metadata headers.
-    """
-    results = collection.query(
-        query_texts=[query],
-        n_results=n_results
-    )
+    print(f"🧠 Connecting to DB...")
+    client = chromadb.PersistentClient(path=db_path)
+    col = client.get_collection(name=client.list_collections()[0].name)
     
-    formatted_context = ""
-    if results['documents'] and results['documents'][0]:
-        for i in range(len(results['documents'][0])):
-            text = results['documents'][0][i]
-            meta = results['metadatas'][0][i]
-            
-            # Extract metadata: Support 'page_label' and 'page'
-            fname = os.path.basename(meta.get('source', 'Unknown'))
-            page = meta.get('page_label') or meta.get('page') or 'N/A'
-            
-            # Format block with clear source tag for the LLM
-            formatted_context += f"--- BLOCK {i+1} ---\n"
-            formatted_context += f"[Source: {fname}, Page {page}]\n"
-            formatted_context += f"Content: {text}\n\n"
-            
-    return formatted_context
+    return model, tokenizer, col
 
-# ================= 3. GENERATION (PRECISE CITATION) =================
+# ================= RETRIEVAL =================
+def retrieve(col, query):
+    res = col.query(query_texts=[query], n_results=3)
+    context = []
+    if res['documents']:
+        for i, doc in enumerate(res['documents'][0]):
+            meta = res['metadatas'][0][i]
+            context.append(f"Source: {meta.get('source', 'UNK')} (Page {meta.get('page_label', '0')})\nText: {doc}")
+    return "\n\n".join(context)
 
-def generate_answer(model, tokenizer, query, context):
-    """
-    Generates strict JSON response with a single mapped source for the quote.
-    """
-    system_instruction = f"""You are a strict banking regulation assistant. 
-Based strictly on the provided Context blocks, answer the User Query.
+# ================= GENERATION (PRO PROMPT) =================
+def generate(model, tokenizer, query, context):
+    # פרומפט משופר ומקצועי
+    prompt = f"""### Instruction:
+You are an expert regulatory compliance assistant. 
+Your task is to answer the user's question based STRICTLY on the provided context.
 
-RULES:
-1. If the Context contains the answer:
-   - Determine if the answer is "Yes" or "No".
-   - Extract a direct "quote" from the text.
-   - Write a short "explanation".
-   - Identify the exact "source" from the [Source: ...] tag above the block you used.
-   - Format output as JSON: {{"verdict": "Yes" or "No", "quote": "...", "explanation": "...", "source": "..."}}
-
-2. If the Context DOES NOT contain the answer:
-   - Format output as JSON: {{"verdict": "N.A", "explanation": "{NA_MESSAGE}", "source": "N/A"}}
-
-3. Do NOT output anything else. Only the JSON object.
-"""
-
-    full_prompt = f"""### Instruction:
-{system_instruction}
+Rules:
+1. If the answer is explicitly supported by the text, return "verdict": "Yes" or "No".
+2. If the answer is NOT found in the context, return "verdict": "N.A".
+3. If verdict is "N.A", set "quote" to "N.A" and "source_details" to "N.A".
+4. "quote" must be an EXACT copy of the relevant text segment.
+5. Return ONLY a valid JSON object with keys: "verdict", "explanation", "quote", "source_details".
 
 ### Input:
 Context:
 {context}
 
-Query:
+Question:
 {query}
 
 ### Response:
 """
-    
-    inputs = tokenizer([full_prompt], return_tensors="pt").to("cuda")
-    
-    outputs = model.generate(
-        **inputs, 
-        max_new_tokens=256,
-        use_cache=True,
-        temperature=0.1, # Keep low for structured output
-    )
-    
-    generated_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
-    
-    # Extract JSON part
-    raw_answer = generated_text.split("### Response:\n")[-1].strip()
-    if "}" in raw_answer:
-        raw_answer = raw_answer.split("}")[0] + "}"
-        
-    return raw_answer
+    inputs = tokenizer([prompt], return_tensors="pt").to("cuda")
+    out = model.generate(**inputs, max_new_tokens=256, temperature=0.1)
+    return tokenizer.batch_decode(out, skip_special_tokens=True)[0].split("### Response:")[-1].strip()
 
-# ================= 4. MAIN LOOP =================
-
+# ================= MAIN =================
 def main():
-    setup_environment()
-    collection, model, tokenizer = load_rag_system()
-    
-    print("\n" + "="*50)
-    print("🤖  RegulAItion RAG Agent (Enhanced Sources)")
-    print("="*50)
-    
-    while True:
-        try:
-            user_query = input("\n❓ Question (or 'exit'): ")
-            if user_query.lower() in ['exit', 'quit']:
-                print("👋 Exiting...")
-                break
-            if not user_query.strip(): continue
-
-            print(f"🔎 Retrieving info...")
-            # Get block-formatted context
-            context = retrieve_context_with_sources(collection, user_query)
+    try:
+        db_path, adapter_path = setup_environment()
+        model, tokenizer, col = load_system(db_path, adapter_path)
+        
+        print("\n✅ SYSTEM READY. ASKING QUESTIONS (PRO MODE)...\n")
+        
+        while True:
+            q = input("❓ Question (or 'exit'): ")
+            if q.lower() in ['exit', 'quit']: break
             
-            if not context:
-                context = "No relevant documents found."
-
-            print(f"🧠 Generating answer...")
-            json_response_str = generate_answer(model, tokenizer, user_query, context)
+            ctx = retrieve(col, q)
+            if not ctx: 
+                print("❌ DB returned no documents.")
+                continue
+                
+            ans = generate(model, tokenizer, q, ctx)
             
+            # הדפסת דיבאג
+            # print(f"\n🐛 DEBUG RAW OUTPUT:\n{ans}\n") 
+
             try:
-                # Parse JSON string to dictionary
-                response_data = json.loads(json_response_str)
+                clean_json = ans[ans.find('{'):ans.rfind('}')+1]
+                data = json.loads(clean_json)
                 
-                print("-" * 60)
-                verdict = response_data.get('verdict', 'Unknown')
-                print(f"Verdict:  {verdict}")
+                print("-" * 50)
+                print(f"Verdict: {data.get('verdict')}")
                 
-                if verdict in ['Yes', 'No']:
-                    print(f"Quote:    \"{response_data.get('quote', 'N/A')}\"")
-                    print(f"Explain:  {response_data.get('explanation', 'N/A')}")
-                    print(f"Source:   {response_data.get('source', 'N/A')}") # Precise Source
+                # תצוגה חכמה יותר: מציג ציטוט ומקור רק אם יש תשובה
+                if data.get('verdict') != 'N.A':
+                    print(f"Quote:   {data.get('quote')}")
+                    src = data.get('source') or data.get('source_details') or "N/A"
+                    print(f"Source:  {src}")
                 else:
-                    print(f"Message:  {response_data.get('explanation', 'N/A')}")
+                    print(f"Quote:   N.A") # נקי יותר
                 
-                print("-" * 60)
+                print(f"Explain: {data.get('explanation')}")
+                print("-" * 50)
+            except:
+                print("⚠️ JSON Error. Raw output:", ans)
 
-            except json.JSONDecodeError:
-                print("⚠️ Warning: Output format error.")
-                print(f"Raw Output: {json_response_str}")
-            
-        except KeyboardInterrupt:
-            break
-        except Exception as e:
-            print(f"❌ Error: {e}")
+    except Exception as e:
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
     main()
